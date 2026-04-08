@@ -1,4 +1,8 @@
-# Lunar Laser Cross Project  
+# Lunar Laser Cross Project
+
+[![Pylint](https://github.com/lispmeister/lunar-cross/actions/workflows/pylint.yml/badge.svg)](https://github.com/lispmeister/lunar-cross/actions/workflows/pylint.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8%20|%203.9%20|%203.10-blue)](lunar-cross-visualization.py)
 
 ![Lunar Cross Promo](docs/images/lunar-cross-promo.jpeg)
 
