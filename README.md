@@ -25,6 +25,21 @@ This is not science fiction. Every component — the laser, the optics, the powe
 - **Core technology**: Kilowatt-class fiber laser + large-aperture beam-shaping optics.  
 - **Visualization tool**: The Python/Matplotlib script renders a scientifically accurate sky diagram at exact naked-eye angular scales.
 
+## Setup & Running
+
+Requires [uv](https://github.com/astral-sh/uv).
+
+```bash
+# Create virtual environment and install dependencies
+uv venv
+uv pip install -r requirements.txt
+
+# Run the visualization (saves PNG to current directory)
+uv run lunar-cross-visualization.py
+```
+
+The script produces `lunar_cross_scientific_visualization_proper_cross.png` in the working directory and opens an interactive plot window.
+
 ## Scientifically Accurate Visualization
 
 ![Scientifically Accurate Visualization](docs/images/lunar_cross_scientific_visualization_proper_cross.png)
