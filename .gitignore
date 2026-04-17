@@ -1,3 +1,23 @@
 .claude
 .venv
 prototype/.venv
+
+# Prototype generated outputs
+prototype/doe_binary_print.png
+prototype/doe_grayscale_print.png
+prototype/lunar_cross_scientific_visualization_proper_cross.png
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.bcf
+*.run.xml
