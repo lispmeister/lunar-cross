@@ -31,7 +31,7 @@ The Stellar Dominion hardware integrates directly into a SpaceX Starship HLS tha
 - Meter-scale beam-expanding telescope
 - Diffractive optical element (DOE) for cross-pattern beam shaping
 - Deployable boom (3–5 m carbon composite + 2-axis gimbal), extending from top of Starship
-- SolAero IMM-α solar array (45 m², hull-mounted rollout panels)
+- SolAero IMM-α solar array (50 m², hull-mounted rollout panels)
 - Amprius silicon-anode lithium-ion battery bank (eclipse bridging)
 - Hull-mounted radiator panels (~20 m²)
 - Pointing/tracking assembly (star tracker + gimbal on boom)
@@ -45,15 +45,15 @@ The Stellar Dominion hardware integrates directly into a SpaceX Starship HLS tha
 
 | Parameter | Value |
 |---|---|
-| Wavelength | 532 nm (frequency-doubled Nd:YAG) or 520–530 nm fiber |
+| Wavelength | 532 nm (second-harmonic generation from ~1064 nm IR fiber laser) |
 | Optical output power | 3–5 kW |
-| Wall-plug efficiency | 30–40% |
-| Electrical power draw | 8–15 kW |
+| Wall-plug efficiency | 25–35% (baseline: 30%, including SHG conversion stage) |
+| Electrical power draw | 12–20 kW |
 | Beam quality | M² < 1.2 (single-mode or near-diffraction-limited) |
-| Vendor class | IPG Photonics YLS series, nLIGHT, or equivalent |
-| Mass (commercial) | ~150–250 kg |
+| Vendor class | IPG Photonics YLS-class IR source + custom SHG stage |
+| Mass (including SHG) | ~200–300 kg |
 
-Green (532 nm) sits at the peak of human photopic response, maximizing perceived brightness per watt. Frequency-doubled Nd:YAG fiber lasers at this power level are commercially available.
+Green (532 nm) sits at the peak of human photopic response, maximizing perceived brightness per watt. **Important clarification:** high-power fiber lasers such as the IPG YLS series are 1070 nm infrared. Reaching 532 nm requires a second-harmonic generation (SHG) crystal stage — a well-established nonlinear optical process, but one that requires custom engineering at the 5 kW CW level. CW SHG conversion efficiency is typically 60–80%, yielding a combined wall-plug efficiency of ~25–35% (baseline: 30%). This is not a COTS plug-in; it is an engineering development task.
 
 ### 3.2 Beam Expander (Telescope)
 
@@ -133,10 +133,10 @@ P_opt = (1 × 10⁻⁹ W/m²) × (2.05 × 10⁻⁵ sr) × (1.477 × 10¹⁷ m²)
 **Electrical power:**
 
 ```
-P_elec = P_opt / η_wall-plug = 5,000 W / 0.35 ≈ 14.3 kW
+P_elec = P_opt / η_wall-plug = 5,000 W / 0.30 ≈ 16.7 kW
 ```
 
-Budget at **15 kW** electrical for the laser subsystem.
+Budget at **17 kW** electrical for the laser subsystem (IR source + SHG stage combined).
 
 ---
 
@@ -155,19 +155,19 @@ Operating in vacuum with no weather or oxidation, we use **bare** IMM-α (invert
 | Parameter | Value |
 |---|---|
 | Technology | SolAero IMM-α, bare cells on Kapton film |
-| Cell efficiency | 33% (AM0, beginning of life) |
+| Cell efficiency | 32% (AM0, beginning of life) |
 | Areal density | 2 kg/m² deployed (no cover glass, lightweight substrate) |
-| Panel output density | 1,361 × 0.33 = 449 W/m² |
+| Panel output density | 1,361 × 0.32 = 435 W/m² |
 | Deployment | Rollout panels unfurling from Starship hull exterior |
 
 ```
-Required electrical power: ~17 kW (laser + avionics + thermal + margin)
-Panel output density: 1,361 × 0.33 = 449 W/m²
-Required area: 17,000 / 449 ≈ 37.9 m²
+Required electrical power: ~20 kW (laser + SHG + avionics + thermal + margin)
+Panel output density: 1,361 × 0.32 = 435 W/m²
+Required area: 20,000 / 435 ≈ 46.0 m²
 ```
 
-**Baseline:** 45 m² → **~20 kW peak output** (margin for degradation)  
-**Mass:** 45 m² × 2 kg/m² = **90 kg** (vs. 500 kg with traditional panels)
+**Baseline:** 50 m² → **~21.8 kW peak output** (margin for degradation)  
+**Mass:** 50 m² × 2 kg/m² = **100 kg** (vs. 500 kg with traditional panels)
 
 **Upgrade path:** Rocket Lab's next-generation **IMM-β** cell achieves 33.3% efficiency with improved specific power (W/kg). It is a drop-in replacement for IMM-α requiring no redesign of the array structure or power system. If available at mission procurement time, IMM-β would provide additional degradation margin at no mass penalty.
 
@@ -182,27 +182,40 @@ We baseline **Amprius SiCore** silicon-anode lithium-ion cells — the highest e
 
 ### 4.4 Battery Sizing (Eclipse Bridging)
 
-Longest eclipse at polar peaks: estimated 12–72 hours during worst-case lunar winter. The laser shuts down during eclipses (no nighttime visibility anyway — if the Moon is eclipsed from Earth's perspective, it's not visible). Battery sized for avionics + thermal survival only:
+LRO illumination models for Peary crater rim show worst-case darkness periods of **up to 120–124 hours** (~5 Earth days) during some lunar winters — significantly longer than the previously estimated 72-hour maximum. The laser shuts down during eclipses (no nighttime visibility anyway). Battery covers avionics and thermal survival only, in two modes:
+
+**Eclipse survival power draw** (laser off):
+
+| Mode | Load | Conditions |
+|---|---|---|
+| Full survival | ~1 kW | Short eclipses (≤72 hr): full avionics + heaters |
+| Hibernation | ~500 W | Extended eclipses (>72 hr): battery heating + avionics keep-alive only |
+
+The system uses ephemeris to predict eclipse duration before entry and selects the appropriate mode. Hibernation allows a cold-start of the laser after eclipse — acceptable since extended dark periods coincide with lunar winter when Sunday visibility is poor anyway.
 
 ```
-Required energy: 1 kW × 72 hr = 72 kWh usable
-Depth of discharge (80% for cycle life): 72 / 0.80 = 90 kWh capacity
-At 280 Wh/kg pack-level (Amprius):
-Mass = 90,000 / 280 = 321 kg
+Battery capacity: 90 kWh (unchanged)
+Usable at 80% DoD: 72 kWh
+
+At 1 kW (full survival):   72,000 / 1,000 = 72 hours coverage
+At 500 W (hibernation):    72,000 /   500 = 144 hours coverage
+Worst-case eclipse:                          124 hours ✓
 ```
 
-**Baseline:** 325 kg Amprius silicon-anode battery bank.
+The existing 90 kWh battery covers the 124-hour worst case in hibernation mode with margin.
+
+**Baseline:** 325 kg Amprius silicon-anode battery bank (unchanged).
 
 ### 4.5 Power Budget
 
 | Subsystem | Power (W) | Notes |
 |---|---|---|
-| Laser (optical 5 kW @ 35%) | 14,300 | Dominant load |
+| Laser (optical 5 kW @ 30%, including SHG) | 17,000 | Dominant load |
 | Pointing/gimbal | 200 | Low power servo drives |
 | Avionics + comms | 300 | Housekeeping, telemetry |
 | Thermal heaters | 500 | Keep laser at operating temp during cold |
-| Margin (10%) | 1,530 | — |
-| **Total** | **16,830 W** | **~17 kW** |
+| Margin (10%) | 1,800 | — |
+| **Total** | **19,800 W** | **~20 kW** |
 
 ---
 
@@ -211,11 +224,11 @@ Mass = 90,000 / 280 = 321 kg
 ### 5.1 Waste Heat
 
 ```
-Waste heat = P_elec - P_opt = 14,300 - 5,000 = 9,300 W ≈ 9.3 kW
+Waste heat = P_elec - P_opt = 17,000 - 5,000 = 12,000 W (laser + SHG)
 ```
 
 Additional avionics waste heat: ~0.5 kW  
-**Total to reject:** ~10 kW
+**Total to reject:** ~12.5 kW
 
 ### 5.2 Radiator Sizing
 
@@ -234,7 +247,7 @@ Q/A = 0.85 × 5.67e-8 × (340⁴ - 100⁴)
      = 0.85 × 5.67e-8 × 1.33e10
      ≈ 640 W/m²
 
-Required area: 10,000 / 640 ≈ 15.6 m²
+Required area: 12,500 / 640 ≈ 19.5 m²
 ```
 
 **Baseline:** 20 m² radiator panels, mounted flush on the Starship hull exterior.
@@ -247,19 +260,19 @@ Starship's stainless steel structure (~200+ tonnes) provides a substantial therm
 
 | Subsystem | Mass (kg) | Basis |
 |---|---|---|
-| Fiber laser assembly | 250 | IPG YLS class, space-qualified |
+| Fiber laser assembly (including SHG) | 280 | IPG YLS class + SHG crystal assembly, space-qualified |
 | DOE + beam optics (telescope, mounts) | 200 | 0.5 m aperture, lightweight mirror |
-| Solar array (45 m², SolAero IMM-α) | 90 | 2 kg/m², bare cells on Kapton, no cover glass |
+| Solar array (50 m², SolAero IMM-α) | 100 | 2 kg/m², bare cells on Kapton, no cover glass |
 | Battery bank (Amprius Si-anode) | 325 | 90 kWh @ 280 Wh/kg pack-level |
 | Radiator panels (20 m², hull-mounted) | 100 | Flush on Starship hull, no deployment mechanism |
 | Pointing assembly (gimbal on boom) | 100 | Star tracker + 2-axis gimbal |
 | Avionics + comms | 40 | Minimal custom; shares Starship comms |
 | Deployable boom (3–5 m) | 75 | Carbon composite + gimbal interface |
 | ~~Structure + pallet~~ | ~~0~~ | **Eliminated — Starship IS the structure** |
-| Integration margin (15%) | 177 | — |
-| **Total** | **1,357 kg** | **~1.4 tonnes** |
+| Integration margin (15%) | 183 | — |
+| **Total** | **1,403 kg** | **~1.4 tonnes** |
 
-The Starship-integrated architecture reduces total payload mass by **41%** vs. the standalone pallet design (2,306 → 1,357 kg). The payload is a small fraction of Starship's lunar delivery capacity.
+The Starship-integrated architecture reduces total payload mass by **39%** vs. the standalone pallet design (2,306 → 1,403 kg). The SolAero IMM-α panels (2 kg/m²) reduce solar array mass from ~500 kg (traditional 10 kg/m² panels) to 100 kg — a 5× improvement. The payload is a small fraction of Starship's lunar delivery capacity.
 
 ---
 
@@ -299,6 +312,33 @@ Starship's 304L stainless steel hull is well-suited to permanent lunar deploymen
 - Mild polar thermal cycling (~50 K variation vs. 300 K at equatorial sites)
 - No wind, seismic, or weather loading
 - Design life exceeds mission life by a large margin
+
+### 7.4 Lunar Surface Environment
+
+#### 7.4.1 Landing Plume and Dust
+
+Starship's descent engines produce a high-velocity plume that displaces loose regolith. In vacuum, displaced particles follow **ballistic trajectories** — there is no lingering dust cloud (no atmosphere to suspend particles). Ejecta settles to the surface within seconds of engine shutdown.
+
+**Mitigation:** All sensitive surfaces (solar panels, optics, DOE) are stowed or covered in protective enclosures during landing and remain so until the dust has settled (typically a few minutes post-shutdown). After deployment, there is no ongoing aeolian dust transport — without an atmosphere, there is no wind to re-mobilize surface material.
+
+**Electrostatic dust levitation:** Real phenomenon, particularly at the terminator where UV photoionization generates surface charge gradients. However, the mass flux is very low, and at ~50 m elevation (laser/optics position on boom) the lofting height is largely exceeded. This is not a showstopper but warrants surface-material selection attention (anti-static coatings on optics).
+
+**Micrometeorite secondary ejecta:** The regolith is continuously gardened by microimpacts, producing a low-level secondary ejecta flux. Over a 10-year mission, this contributes to gradual surface abrasion — negligible for robust fused-silica optics but a long-term consideration for solar panel cover treatments (bare IMM-α cells without cover glass benefit from smooth surfaces).
+
+#### 7.4.2 Radiation Environment
+
+The Moon has no magnetosphere. The system is exposed to:
+- **Galactic cosmic rays (GCR):** Constant, penetrating, minimum ~100 mrem/day equivalent
+- **Solar particle events (SPE):** Sporadic, can deliver large doses in hours; worst-case ≥10 Gy behind minimal shielding
+
+**Mitigations:**
+- Starship's ~4 mm stainless steel hull provides modest shielding (~5–10 g/cm² areal density) for internally mounted electronics; reduces GCR dose and attenuates SPE proton spectrum
+- Laser diodes and SHG crystal are housed inside the boom enclosure with additional local shielding
+- Sunday-only operation limits cumulative dose to electronics: ~416 operating hours/year vs. 8,760 for a continuously operated system; dose to laser diodes scales with operating time
+- Amprius SiCore cells: silicon-anode chemistry shows some radiation-induced capacity degradation; not the lifetime-limiting factor given the low cycling rate (Sunday only)
+- Avionics baseline: rad-hardened design (latch-up tolerant, EDAC on memory); standard for lunar surface missions
+
+**Open item:** A dedicated radiation transport analysis (SHIELDOSE or equivalent) is needed to quantify worst-case SPE fluence behind the Starship hull and size any additional local shielding for the avionics enclosure.
 
 ---
 
@@ -362,7 +402,7 @@ Winter nights are longer — more viewing hours per month in November–February
 
 ### 9.5 Sunday Operation Mode
 
-The baseline design supports continuous autonomous operation, but the cross fires **only on Sundays** — when the Moon is visible at night over the US. This is a scheduling decision, not a hardware redesign: the same 45 m² SolAero array and 325 kg battery are retained.
+The baseline design supports continuous autonomous operation, but the cross fires **only on Sundays** — when the Moon is visible at night over the US. This is a scheduling decision, not a hardware redesign: the same 50 m² SolAero array and 325 kg battery are retained.
 
 **Why not shrink the solar array for Sunday-only duty?**
 
@@ -377,12 +417,12 @@ Small solar + burst battery:
   Total: 689 kg
 
 vs. baseline:
-  Solar array (45 m² SolAero): 45 × 2 = 90 kg
+  Solar array (50 m² SolAero): 50 × 2 = 100 kg
   Survival battery: 325 kg
-  Total: 415 kg
+  Total: 425 kg
 ```
 
-The baseline is **274 kg lighter** — the opposite of a wash. SolAero's low areal density (2 kg/m²) makes large arrays cheap on mass, so the week-long charging strategy no longer has a mass incentive. It also adds single-point failure risk and deep cycling stress. Baseline hardware is kept as-is.
+The baseline is **264 kg lighter** — the opposite of a wash. SolAero's low areal density (2 kg/m²) makes large arrays cheap on mass, so the week-long charging strategy no longer has a mass incentive. It also adds single-point failure risk and deep cycling stress. Baseline hardware is kept as-is.
 
 **Benefits of Sunday-only operation:**
 
@@ -405,7 +445,7 @@ All figures in 2025 USD. Ranges reflect uncertainty from COTS-to-space-qualified
 |---|---|---|---|
 | Laser system (5 kW, space-qualified) | 5 | 15 | Commercial fiber lasers ~$200–500/W; space-qual premium |
 | DOE + beam optics | 2 | 5 | Custom fused-silica DOE + 0.5 m telescope |
-| Solar array (45 m², SolAero IMM-α) | 5 | 12 | Premium bare cells; less area, similar total cost |
+| Solar array (50 m², SolAero IMM-α) | 5 | 12 | Premium bare cells; less area, similar total cost |
 | Battery bank (Amprius Si-anode) | 3 | 8 | 325 kg; COTS cells + custom space pack |
 | Radiators + thermal (hull-mounted) | 1 | 2 | Simpler integration vs. freestanding panels |
 | Pointing assembly + boom | 3 | 8 | Boom + gimbal + star tracker |
@@ -473,7 +513,22 @@ A full regulatory analysis is beyond the scope of this document; key touchpoints
 
 ---
 
-## 13. Project Timeline — Easter 2027 Target
+## 13. Risks and Open Issues
+
+| Risk | Severity | Mitigation | Status |
+|---|---|---|---|
+| Starship landing reliability | High | SpaceX flight heritage; gating dependency, not mitigable by us | External dependency |
+| Landing plume contamination | Medium | Stow all sensitive surfaces during landing; deploy after; no ongoing transport | Addressed in design |
+| Radiation — GCR/SPE | Medium | Starship hull shielding; rad-hard avionics; Sunday-only reduces cumulative dose | Needs detailed SHIELDOSE analysis |
+| Deep eclipse survival (>72 hr) | Low | 500 W hibernation mode; 90 kWh covers 144 hr worst-case (124 hr) | Addressed in design |
+| 5 kW CW green laser via SHG | Medium | Physics is well-established; engineering at this power level is not COTS — requires development | Engineering development risk |
+| DOE degradation (UV + micrometeorite flux) | Low | Fused silica is UV-stable; micrometeorite flux is low; spare DOE on the manifest is feasible | Needs long-duration vacuum test data |
+| IMM-α cell availability at scale | Low | Rocket Lab is a qualified commercial supplier; 50 m² is within their production capacity | Monitor lead times |
+| First-light verification | Low | Multiple US ground stations with photometry/imaging; citizen-science network augments | Operational planning item |
+
+---
+
+## 14. Project Timeline — Easter 2027 Target
 
 **Aspirational first-light: Easter Sunday, April 1, 2027.**
 
@@ -507,7 +562,7 @@ This is a compressed schedule (10 months vs. 12-month baseline). Compression is 
 
 ---
 
-## 14. References
+## 15. References
 
 - NASA Lunar Fact Sheet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html
 - LRO Illumination Maps (peaks of eternal light): NASA GSFC / LROC team

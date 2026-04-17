@@ -156,7 +156,7 @@ mounting area for SolAero IMM-\(\alpha\) solar panels. A deployable boom
 extends the laser, telescope, and diffractive optical element from the top of
 the vehicle, pointing horizontally toward Earth. The cross fires every Sunday
 when the Moon is visible at night over the US, with aspirational first light on
-Easter Sunday, April~1, 2027. Total system mass is \SI{1.4}{\tonne}---a 41\%
+Easter Sunday, April~1, 2027. Total system mass is \SI{1.4}{\tonne}---a 39\%
 reduction over a standalone pallet design. Core project cost is
 \$42--114 million (projector, energy system, Starship modifications, and
 ground systems), with a Starship lunar cargo flight adding \$20--50 million
@@ -207,7 +207,7 @@ Location & Lunar north pole (peak of eternal light) \\
 Target coverage & Contiguous United States (lower 48 states) \\
 Cross pattern & \ang{0.7} total angular span, \SI{532}{\nano\meter} green \\
 Optical power & \SI{3}{\kilo\watt}--\SI{5}{\kilo\watt} \\
-Power source & SolAero IMM-\(\alpha\), \SI{45}{\meter\squared}, \SI{20}{\kilo\watt} peak \\
+Power source & SolAero IMM-\(\alpha\), \SI{50}{\meter\squared}, \SI{21.8}{\kilo\watt} peak \\
 System mass & \SI{1.4}{\tonne} \\
 Operation & Sundays only; first light Easter 2027 \\
 Design life & 10 years \\
@@ -255,7 +255,7 @@ Fiber laser & Generate green light & \SI{5}{\kilo\watt} optical, \SI{532}{\nano\
 Beam expander & Collimate to \SI{\sim 0.5}{\meter} aperture & M$^2 < 1.2$ \\
 DOE & Shape beam into cross pattern & \ang{0.7} span, 80\% efficiency \\
 Deployable boom & Position optics above hull & 3--5\,m carbon composite + gimbal \\
-Solar array & Primary power & \SI{45}{\meter\squared} SolAero IMM-$\alpha$, \SI{20}{\kilo\watt} \\
+Solar array & Primary power & \SI{50}{\meter\squared} SolAero IMM-$\alpha$, \SI{20}{\kilo\watt} \\
 Battery bank & Eclipse bridging & \SI{325}{\kilo\gram} Amprius Si-anode \\
 Radiator panels & Reject laser waste heat & \SI{20}{\meter\squared}, hull-mounted \\
 Pointing assembly & Track Earth as Moon orbits & $< \ang{0.1}$ accuracy \\
@@ -270,24 +270,28 @@ Avionics + comms & Housekeeping, telemetry & Minimal custom; shares Starship \\
 
 \subsection{Laser}
 
-The laser is the heart of the mission. Green light at \SI{532}{\nano\meter}
-sits at the peak of the human photopic response curve, maximizing perceived
-brightness per watt delivered. Frequency-doubled Nd:YAG fiber lasers at the
-required power level are commercially available from vendors such as IPG
-Photonics and nLIGHT.
+Green light at \SI{532}{\nano\meter} sits at the peak of the human photopic
+response curve, maximizing perceived brightness per watt delivered.
+\textbf{Important clarification:} high-power fiber lasers such as the IPG YLS
+series operate at \SI{1070}{\nano\meter} infrared. Reaching \SI{532}{\nano\meter}
+requires a \textbf{second-harmonic generation (SHG)} crystal stage---a well-established
+nonlinear optical process, but one that requires custom engineering at the 5\,kW CW level.
+CW SHG conversion efficiency is typically 60--80\%, yielding a combined wall-plug efficiency
+of $\approx$25--35\% (baseline: 30\%). This is an engineering development task, not a COTS
+solution.
 
 \begin{center}
 \begin{tabular}{ll}
 \toprule
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
-Wavelength & \SI{532}{\nano\meter} (or \SI{520}{\nano\meter}--\SI{530}{\nano\meter} direct) \\
+Wavelength & \SI{532}{\nano\meter} (SHG from \SI{1064}{\nano\meter} IR fiber laser) \\
 Optical output & \SI{3}{\kilo\watt}--\SI{5}{\kilo\watt} CW \\
-Wall-plug efficiency & 30--40\% \\
-Electrical power & \SI{8}{\kilo\watt}--\SI{15}{\kilo\watt} \\
+Wall-plug efficiency & 25--35\% (baseline: 30\%, including SHG stage) \\
+Electrical power & \SI{12}{\kilo\watt}--\SI{20}{\kilo\watt} \\
 Beam quality & $M^2 < 1.2$ \\
 Rated lifetime & $> \num{100000}$ hours ($\approx$ 11 years) \\
-Commercial mass & \SI{150}{\kilo\gram}--\SI{250}{\kilo\gram} \\
+Mass (including SHG) & \SI{200}{\kilo\gram}--\SI{300}{\kilo\gram} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -403,7 +407,7 @@ arrays.
 \textbf{Parameter} & \textbf{Value} \\
 \midrule
 Technology & SolAero IMM-$\alpha$, bare cells on Kapton \\
-Cell efficiency & 33\% (AM0, beginning of life) \\
+Cell efficiency & 32\% (AM0, beginning of life) \\
 Areal density & \SI{2}{\kilo\gram\per\meter\squared} deployed \\
 Deployment & Rollout panels unfurling from Starship hull \\
 \bottomrule
@@ -411,21 +415,21 @@ Deployment & Rollout panels unfurling from Starship hull \\
 \end{center}
 
 \begin{align}
-  P_{\text{required}} &\approx \SI{17}{\kilo\watt} \quad \text{(see power budget)} \\
-  \eta_{\text{cell}}  &= 0.33 \quad \text{(SolAero IMM-$\alpha$)} \\
+  P_{\text{required}} &\approx \SI{20}{\kilo\watt} \quad \text{(see power budget)} \\
+  \eta_{\text{cell}}  &= 0.32 \quad \text{(SolAero IMM-$\alpha$, BOL)} \\
   P_{\text{array}}    &= G_{\odot} \cdot \eta \cdot A
-    = 1361 \times 0.33 \times A = 449\, A\ \si{\watt\per\meter\squared}
+    = 1361 \times 0.32 \times A = 435\, A\ \si{\watt\per\meter\squared}
 \end{align}
 
-Setting $P_{\text{array}} = \SI{20}{\kilo\watt}$ (with degradation margin):
+Setting $P_{\text{array}} \geq \SI{20}{\kilo\watt}$ (with degradation margin):
 
 \[
-  A = \frac{20\,000}{449} \approx \SI{44.5}{\meter\squared}
-    \quad \rightarrow \quad \textbf{baseline: \SI{45}{\meter\squared},\ \SI{90}{\kilo\gram}}
+  A = \frac{20\,000}{435} \approx \SI{46.0}{\meter\squared}
+    \quad \rightarrow \quad \textbf{baseline: \SI{50}{\meter\squared},\ \SI{100}{\kilo\gram}}
 \]
 
 \noindent This compares to \SI{500}{\kilo\gram} for traditional rigid panels
-at \SI{10}{\kilo\gram\per\meter\squared}---a \textbf{5.6$\times$ mass
+at \SI{10}{\kilo\gram\per\meter\squared}---a \textbf{5$\times$ mass
 reduction}.
 
 \medskip
@@ -455,18 +459,33 @@ Pack (custom vacuum-rated) & $\sim$\SI{280}{\watt\hour\per\kilo\gram} & 70\% cel
 
 \subsection{Battery Sizing (Eclipse Bridging)}
 
-The laser shuts down during eclipses (no nighttime observer sees an eclipsed
-Moon anyway). The battery sustains survival heating and avionics only:
+LRO illumination models for Peary crater rim show worst-case darkness periods of
+\textbf{up to 120--124 hours} ($\approx$5 Earth days) during some lunar winters.
+The laser shuts down during eclipses (no observer sees an eclipsed Moon). Battery
+sustains avionics and thermal survival only, in two modes:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Mode} & \textbf{Load} & \textbf{Conditions} \\
+\midrule
+Full survival & $\sim$\SI{1}{\kilo\watt} & Short eclipses ($\leq$72\,hr): full avionics + heaters \\
+Hibernation & $\sim$\SI{500}{\watt} & Extended eclipses ($>$72\,hr): battery heat + avionics keep-alive \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The system uses ephemeris to predict eclipse duration before entry and selects the
+appropriate mode. Battery capacity (unchanged):
 
 \[
-  E_{\text{usable}} = \SI{1}{\kilo\watt} \times \SI{72}{\hour}
-                    = \SI{72}{\kilo\watt\hour}
+  E_{\text{capacity}} = \SI{90}{\kilo\watt\hour}
+  \quad \rightarrow \quad E_{\text{usable}} = 90 \times 0.80 = \SI{72}{\kilo\watt\hour}
 \]
 
-Accounting for 80\% depth of discharge (cycle-life margin):
-
 \[
-  E_{\text{capacity}} = \frac{72}{0.80} = \SI{90}{\kilo\watt\hour}
+  \text{At \SI{500}{\watt} (hibernation):}\quad
+  \frac{72\,000}{500} = \SI{144}{\hour} > \SI{124}{\hour}\ \checkmark
 \]
 
 At \SI{280}{\watt\hour\per\kilo\gram} pack-level (Amprius):
@@ -483,13 +502,13 @@ At \SI{280}{\watt\hour\per\kilo\gram} pack-level (Amprius):
 \toprule
 \textbf{Subsystem} & \textbf{Power (W)} & \textbf{Notes} \\
 \midrule
-Fiber laser @ 35\% efficiency & 14\,300 & Dominant load \\
+Fiber laser @ 30\% efficiency (incl.\ SHG) & 17\,000 & Dominant load \\
 Pointing assembly & 200 & Low-power servo drives \\
 Avionics + communications & 300 & Housekeeping, telemetry \\
 Thermal heaters & 500 & Laser pre-heating during cold periods \\
-10\% margin & 1\,530 & \\
+10\% margin & 1\,800 & \\
 \midrule
-\textbf{Total} & \textbf{16\,830} & $\approx$\,\SI{17}{\kilo\watt} \\
+\textbf{Total} & \textbf{19\,800} & $\approx$\,\SI{20}{\kilo\watt} \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -500,12 +519,13 @@ Thermal heaters & 500 & Laser pre-heating during cold periods \\
 
 \subsection{Waste Heat}
 
-The laser produces approximately 9.3\,kW of waste heat (electrical input minus
-optical output). Combined with avionics, total heat rejection is:
+The laser subsystem (IR source + SHG stage) produces 12\,kW of waste heat
+(electrical input minus optical output). Combined with avionics, total heat
+rejection is:
 
 \[
   Q_{\text{total}} = P_{\text{elec}} - P_{\text{opt}} + P_{\text{avionics}}
-                   \approx 14\,300 - 5\,000 + 500 = \SI{9.8}{\kilo\watt}
+                   \approx 17\,000 - 5\,000 + 500 = \SI{12.5}{\kilo\watt}
 \]
 
 \subsection{Radiator Sizing}
@@ -530,7 +550,7 @@ where $\varepsilon = 0.85$ (black anodized aluminum), $\sigma =
 \]
 
 \[
-  A_{\text{radiator}} = \frac{10\,000}{640} \approx \SI{15.6}{\meter\squared}
+  A_{\text{radiator}} = \frac{12\,500}{640} \approx \SI{19.5}{\meter\squared}
     \quad \rightarrow \quad \textbf{baseline: \SI{20}{\meter\squared}}
 \]
 
@@ -543,27 +563,27 @@ where $\varepsilon = 0.85$ (black anodized aluminum), $\sigma =
 \toprule
 \textbf{Subsystem} & \textbf{Mass (kg)} & \textbf{Basis} \\
 \midrule
-Fiber laser assembly & 250 & IPG YLS class, space-qualified \\
+Fiber laser assembly (incl.\ SHG) & 280 & IPG YLS class + SHG crystal assembly, space-qualified \\
 DOE + beam optics & 200 & 0.5\,m aperture, lightweight mirror \\
-Solar array (45\,m$^2$, SolAero IMM-$\alpha$) & 90 & 2\,kg/m$^2$, bare cells on Kapton \\
+Solar array (50\,m$^2$, SolAero IMM-$\alpha$) & 100 & 2\,kg/m$^2$, bare cells on Kapton \\
 Battery bank (Amprius Si-anode) & 325 & 90\,kWh @ 280\,Wh/kg pack \\
 Radiator panels (20\,m$^2$, hull-mounted) & 100 & Flush on Starship hull \\
 Pointing assembly & 100 & Star tracker + 2-axis gimbal \\
 Avionics + communications & 40 & Minimal custom; shares Starship comms \\
 Deployable boom (3--5\,m) & 75 & Carbon composite + gimbal interface \\
 \textit{Structure/pallet} & \textit{0} & \textit{Eliminated --- Starship IS the structure} \\
-15\% integration margin & 177 & \\
+15\% integration margin & 183 & \\
 \midrule
-\textbf{Total} & \textbf{1\,357} & \textbf{$\approx$\,1.4 tonnes} \\
+\textbf{Total} & \textbf{1\,403} & \textbf{$\approx$\,1.4 tonnes} \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent At \SI{1.4}{\tonne}---a 41\% reduction over the standalone pallet
+\noindent At \SI{1.4}{\tonne}---a 39\% reduction over the standalone pallet
 architecture---the Stellar Dominion hardware is a small fraction of Starship
 HLS delivery capacity. The mass savings stem from eliminating the pallet
-structure entirely (\SI{400}{\kilo\gram}) and from SolAero's 5.6$\times$
-lighter solar panels (\SI{90}{\kilo\gram} vs.\ \SI{500}{\kilo\gram}).
+structure entirely (\SI{400}{\kilo\gram}) and from SolAero's 5$\times$
+lighter solar panels (\SI{100}{\kilo\gram} vs.\ \SI{500}{\kilo\gram}).
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Landing, Deployment, and Pointing}
@@ -612,6 +632,48 @@ deployment: no corrosion (no oxygen or moisture), mild polar thermal cycling
 ($\sim$\SI{50}{\kelvin} vs.\ \SI{300}{\kelvin} at equatorial sites), and no
 wind, seismic, or weather loading. Structural design life exceeds the
 10-year mission life by a large margin.
+
+\subsection{Lunar Surface Environment}
+
+\subsubsection*{Landing Plume and Dust}
+
+Starship's descent engines displace loose regolith during landing. In
+vacuum, displaced particles follow \textbf{ballistic trajectories}---there is
+no lingering cloud (no atmosphere to suspend particles), and ejecta settles
+within seconds of engine shutdown. All sensitive surfaces (solar panels,
+optics, DOE) are stowed in protective enclosures during landing and deployed
+only after the plume has fully dispersed.
+
+Once deployed, there is \textbf{no ongoing aeolian transport}---without an
+atmosphere, surface material cannot be re-mobilized by wind. Electrostatic
+dust levitation exists near the terminator but produces negligible mass flux
+at \SI{50}{\meter} elevation. Anti-static surface coatings on optical
+elements are a prudent precaution. Micrometeorite-driven regolith gardening
+produces a very low secondary ejecta flux over 10 years---relevant for
+surface abrasion studies but not a mission-level concern for fused-silica
+optics.
+
+\subsubsection*{Radiation Environment}
+
+The Moon has no magnetosphere. The system is continuously exposed to galactic
+cosmic rays (GCR) and sporadic solar particle events (SPE). Mitigations:
+
+\begin{itemize}[leftmargin=1.5em]
+  \item Starship's $\sim$4\,mm stainless steel hull provides $\approx$5--10\,g/cm$^2$
+        of areal shielding for internally mounted electronics, attenuating
+        the lower-energy SPE proton spectrum.
+  \item Laser diodes and SHG crystal are inside the boom enclosure with
+        additional local shielding.
+  \item Sunday-only operation limits cumulative dose to active electronics
+        ($\approx$416 operating hours/year vs.\ 8\,760 for continuous
+        operation).
+  \item Avionics baseline: radiation-hardened design (latch-up tolerant,
+        EDAC on memory)---standard for lunar surface missions.
+\end{itemize}
+
+\noindent \textbf{Open item:} A dedicated radiation transport analysis
+(SHIELDOSE or equivalent) is needed to quantify worst-case SPE fluence
+and size any additional local shielding for the avionics enclosure.
 
 \subsection{Pointing and Tracking}
 
@@ -689,7 +751,7 @@ look up simultaneously and see the same light.
 The baseline design supports continuous autonomous operation, but the cross
 fires \textbf{only on Sundays}---when the Moon is visible at night over the
 United States. This is a scheduling decision, not a hardware redesign: the
-same \SI{45}{\meter\squared} SolAero array and \SI{325}{\kilo\gram} Amprius
+same \SI{50}{\meter\squared} SolAero array and \SI{325}{\kilo\gram} Amprius
 battery are retained.
 
 \subsection{Why Not Shrink the Hardware?}
@@ -703,13 +765,13 @@ at \SI{2}{\kilo\gram\per\meter\squared}, the baseline wins decisively:
 \toprule
 \textbf{Architecture} & \textbf{Solar (kg)} & \textbf{Battery (kg)} & \textbf{Total (kg)} \\
 \midrule
-Baseline (45\,m$^2$ SolAero + survival battery) & 90 & 325 & 415 \\
+Baseline (50\,m$^2$ SolAero + survival battery) & 100 & 325 & 425 \\
 Small solar + burst battery (7\,m$^2$ SolAero) & 14 & 675 & 689 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\noindent The baseline is \textbf{274\,kg lighter}---the opposite of a wash.
+\noindent The baseline is \textbf{264\,kg lighter}---the opposite of a wash.
 SolAero's low areal density makes large arrays cheap on mass, so the
 week-long charging strategy loses its mass incentive entirely. It also adds
 single-point failure risk and deep cycling stress. The baseline hardware is
@@ -747,7 +809,7 @@ space qualification).
 \midrule
 Laser system (5\,kW, space-qual) & 5 & 15 & \$200--500/W; 5--20$\times$ space premium \\
 DOE + beam optics & 2 & 5 & Custom fused-silica DOE + telescope \\
-Solar array (45\,m$^2$, SolAero IMM-$\alpha$) & 5 & 12 & Premium cells; less area than traditional \\
+Solar array (50\,m$^2$, SolAero IMM-$\alpha$) & 5 & 12 & Premium cells; less area than traditional \\
 Battery bank (Amprius Si-anode) & 3 & 8 & 325\,kg; COTS cells + custom space pack \\
 Radiators + thermal hardware & 1 & 2 & Hull-mounted; standard spacecraft thermal \\
 Pointing assembly + boom & 3 & 8 & Star tracker, 2-axis gimbal, carbon boom \\
@@ -893,6 +955,27 @@ moment Starship is.
     Multi-kilowatt lasers are ITAR/EAR-controlled items. Standard export
     licensing applies; no fundamental obstacles for a US-based program.
 \end{description}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Risks and Open Issues}
+% ─────────────────────────────────────────────────────────────────────────────
+
+\begin{center}
+\begin{tabular}{p{4cm}lp{4.5cm}l}
+\toprule
+\textbf{Risk} & \textbf{Severity} & \textbf{Mitigation} & \textbf{Status} \\
+\midrule
+Starship landing reliability & High & SpaceX flight heritage; gating dependency & External dep. \\
+Landing plume contamination & Medium & Stow during landing; deploy after & Addressed \\
+Radiation (GCR/SPE) & Medium & Hull shielding; rad-hard avionics; Sunday-only limits dose & Analysis needed \\
+Deep eclipse $>$72\,hr & Low & 500\,W hibernation; 90\,kWh covers 144\,hr & Addressed \\
+5\,kW CW SHG at scale & Medium & Physics proven; engineering dev.\ required & Dev.\ risk \\
+DOE degradation & Low & Fused-silica UV-stable; low micrometeorite flux & Long-term test needed \\
+IMM-$\alpha$ availability & Low & Rocket Lab commercial supplier; 50\,m$^2$ feasible & Monitor lead times \\
+First-light verification & Low & US ground stations + citizen-science network & Ops planning \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 % ─────────────────────────────────────────────────────────────────────────────
 \section{Visualization}
